@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QUANTUM JUMP // Premium Interactive Experience</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- DESIGN SYSTEM & CSS VARIABLES --- */
+        :root {
+            --bg-dark: #030408;
+            --navy-deep: #080b16;
+            --neon-cyan: #00f2fe;
+            --accent-purple: #7000ff;
+            --text-pure: #ffffff;
+            --text-muted: #6c7293;
+            --text-dim: #3f445e;
+            --font-display: 'Orbitron', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+            --glass-bg: rgba(8, 11, 22, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.04);
+            --glass-shadow: 0 30px 70px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+
+        /* --- STRICT SINGLE VIEWPORT RESET --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+            background-color: var(--bg-dark);
+            font-family: var(--font-sans);
+            color: var(--text-pure);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* --- IMMERSIVE LUSION-INSPIRED BACKGROUND SCENERY --- */
+        .scenery-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        /* Cinematic Noise Filter Overlay */
+        .film-grain {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            opacity: 0.025;
+            z-index: 10;
+        }
+
+        /* Slow Organic Fluid Ambient Blobs */
+        .ambient-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            opacity: 0.15;
+            mix-blend-mode: screen;
+            animation: orbFloat 25s infinite alternate ease-in-out;
+        }
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: var(--accent-purple);
+            top: -10%, left: -10%;
+        }
+        .orb-2 {
+            width: 600px; height: 600px;
+            background: var(--neon-cyan);
+            bottom: -20%; right: -10%;
+            animation-duration: 35s;
+        }
+
+        /* Premium Mouse Follow Mesh Aura */
+        .interactive-glow-mesh {
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 242, 254, 0.03) 0%, rgba(112, 0, 255, 0.01) 50%, transparent 100%);
+            top: -400px;
+            left: -400px;
+            border-radius: 50%;
+            transform: translate3d(0,0,0);
+            z-index: 2;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(40px, -60px) scale(1.1); }
+            100% { transform: translate(-20px, 30px) scale(0.92); }
+        }
+
+        /* --- GLOBAL INTERFACE ARCHITECTURE --- */
+        .workspace {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            display: grid;
+            grid-template-rows: 80px 1fr;
+            padding: 0 60px;
+        }
+
+        /* --- TOP HEADER NAVIGATION --- */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .brand-logo {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            color: var(--text-pure);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .brand-logo::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 10px var(--neon-cyan);
+            border-radius: 50%;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-link {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .nav-link:hover {
+            color: var(--text-pure);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0; width: 100%; height: 1px;
+            background: var(--neon-cyan);
+            transform: scaleX(0);
+            transform-origin: right;
+            transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .nav-link:hover::after {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        /* --- CENTER SCREEN SPLIT CONTENT SECTION --- */
+        main {
+            display: grid;
+            grid-template-columns: 42% 58%;
+            align-items: center;
+            height: 100%;
+            padding-bottom: 40px;
+        }
+
+        /* LEFT COLUMN PANEL */
+        .content-panel-left {
+            padding-right: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title-group {
+            margin-bottom: 25px;
+        }
+
+        .title-group h2 {
+            font-family: var(--font-display);
+            font-size: clamp(2.8rem, 5vw, 4.2rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            background: linear-gradient(180deg, #ffffff 40%, #4a506e 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .editorial-desc {
+            font-size: 0.95rem;
+            font-weight: 300;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 380px;
+            margin-bottom: 35px;
+        }
+
+        /* Premium Luxury Interactive Buttons */
+        .action-cluster {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .btn-luxury {
+            position: relative;
+            padding: 14px 32px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-luxury-primary {
+            background: var(--text-pure);
+            color: var(--bg-dark);
+            border: 1px solid var(--text-pure);
+            box-shadow: 0 10px 25px rgba(255, 255, 255, 0.05);
+        }
+        .btn-luxury-primary:hover {
+            background: transparent;
+            color: var(--text-pure);
+            box-shadow: 0 15px 30px rgba(0, 242, 254, 0.15);
+            border-color: var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+
+        .btn-luxury-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .btn-luxury-secondary:hover {
+            color: var(--text-pure);
+            border-color: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+            transform: translateY(-2px);
+        }
+
+        /* Minimal Technical Badges */
+        .badge-matrix {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 12px 24px;
+            justify-content: start;
+        }
+
+        .tech-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        .tech-badge:hover {
+            color: var(--text-muted);
+        }
+
+        .tech-badge svg {
+            width: 12px;
+            height: 12px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            transition: stroke 0.3s;
+        }
+        .tech-badge:hover svg {
+            stroke: var(--neon-cyan);
+        }
+
+        /* RIGHT COLUMN CONSOLE HUB */
+        .content-panel-right {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            perspective: 1200px; /* Provides depth viewport axis */
+            width: 100%;
+        }
+
+        /* Premium Floating Luxury Crystal Enclosure */
+        .console-enclosure {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            padding: 24px;
+            border-radius: 28px;
+            box-shadow: var(--glass-shadow);
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+            will-change: transform;
+        }
+
+        /* Modal Overlay System */
+        .info-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(3, 4, 8, 0.85);
+            backdrop-filter: blur(16px);
+            z-index: 200;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        .info-modal.active {
+            opacity: 1; pointer-events: auto;
+        }
+        .modal-card {
+            background: #0d101d;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            border-radius: 24px;
+            max-width: 480px;
+            width: 90%;
+            box-shadow: var(--glass-shadow);
+            text-align: left;
+        }
+        .modal-card h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            letter-spacing: 2px;
+        }
+        .modal-card p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        /* --- TRIPLE CHECK LOCK: IMMUTABLE GAME CSS SCHEMATICS --- */
+        .game-container {
+            position: relative;
+            background: linear-gradient(145deg, #141622, #1a1d2f);
+            padding: clamp(10px, 3vw, 20px);
+            border-radius: 16px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.05);
+            text-align: center;
+            width: 100%;
+            max-width: 640px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+        .header h1 {
+            font-size: clamp(1.1rem, 4vw, 1.5rem);
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #00f2fe, #ff007f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+        }
+        .score-row {
+            display: flex;
+            gap: 8px;
+        }
+        .score-box {
+            font-size: clamp(0.8rem, 3vw, 1.1rem);
+            font-weight: bold;
+            color: #00f2fe;
+            background: rgba(0, 242, 254, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 242, 254, 0.2);
+        }
+        .high-score-box {
+            color: #ff007f;
+            background: rgba(255, 0, 127, 0.1);
+            border: 1px solid rgba(255, 0, 127, 0.2);
+        }
+        .canvas-wrapper {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 3 / 2;
+        }
+        canvas {
+            background-color: #08090f;
+            border-radius: 8px;
+            display: block;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+            cursor: pointer;
+            width: 100%;
+            height: 100%;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 14, 21, 0.88);
+            backdrop-filter: blur(4px);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        .overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .dashboard-panel {
+            margin-top: 15px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            background: rgba(8, 9, 15, 0.6);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .panel-card {
+            text-align: center;
+            padding: 8px 4px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 8px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+        }
+        .panel-card h3 {
+            font-size: clamp(0.6rem, 2vw, 0.75rem);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #8a8fbc;
+            margin-bottom: 5px;
+        }
+        .panel-card p {
+            font-size: clamp(0.7rem, 2.2vw, 0.9rem);
+            font-weight: bold;
+        }
+        .key-cap {
+            background: #1a1d2f;
+            border: 1px solid #3a3f68;
+            border-radius: 4px;
+            padding: 1px 4px;
+            font-size: clamp(0.65rem, 2vw, 0.8rem);
+            color: #00f2fe;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scenery-container">
+        <div class="film-grain"></div>
+        <div class="ambient-orb orb-1"></div>
+        <div class="ambient-orb orb-2"></div>
+        <div class="interactive-glow-mesh" id="mouseAura"></div>
+    </div>
+
+    <div class="workspace">
+        <header>
+            <div class="brand-logo">Quantum Jump</div>
+            <nav class="nav-actions">
+                <button class="nav-link" onclick="toggleModal('aboutModal')">About</button>
+                <a href="https://github.com/EncryptWiser" target="_blank" class="nav-link">GitHub</a>
+                <button class="nav-link" style="color: var(--neon-cyan)" onclick="focusConsole()">Play Now</button>
+            </nav>
+        </header>
+
+        <main>
+            <div class="content-panel-left">
+                <div class="title-group">
+                    <h2>Quantum</h2>
+                    <h2>Jump</h2>
+                </div>
+                <p class="editorial-desc">Master momentum dynamics within fluctuating hyper-rifts. Avoid ground structural vectors and slide beneath drone arrays.</p>
+                
+                <div class="action-cluster">
+                    <button class="btn-luxury btn-luxury-primary" onclick="focusConsole()">Play Terminal</button>
+                    <a href="https://github.com/EncryptWiser/Quantum-Jump.git" target="_blank" class="btn-luxury btn-luxury-secondary">Source Code</a>
+                </div>
+
+                <div class="badge-matrix">
+                    <div class="tech-badge"><svg><path d="M1 6l3 3 7-7"/></svg> Browser Game</div>
+                    <div class="tech-badge"><svg><path d="M1 6l3 3 7-7"/></svg> Endless Runner</div>
+                    <div class="tech-badge"><svg><path d="M1 6l3 3 7-7"/></svg> Neon Graphics</div>
+                    <div class="tech-badge"><svg><path d="M1 6l3 3 7-7"/></svg> 60 FPS Core</div>
+                </div>
+            </div>
+
+            <div class="content-panel-right" id="rightTrack">
+                <div class="console-enclosure" id="consoleContainer">
+                    
+                    <div class="game-container">
+                        <div class="header">
+                            <h1>Quantum Jump</h1>
+                            <div class="score-row">
+                                <div class="score-box">SCORE: <span id="score">0</span></div>
+                                <div class="score-box high-score-box">BEST: <span id="highScore">0</span></div>
+                            </div>
+                        </div>
+
+                        <div class="canvas-wrapper">
+                            <canvas id="gameCanvas" width="600" height="400"></canvas>
+
+                            <div class="overlay" id="gameOverlay">
+                                <h2 id="overlay-title">QUANTUM JUMP</h2>
+                                <p id="overlay-desc">Use Jump, Double Jump, and Slides to dodge security vectors!</p>
+                                <button class="btn" id="startBtn">START GAME</button>
+                            </div>
+                        </div>
+
+                        <div class="dashboard-panel">
+                            <div class="panel-card" style="border-bottom-color: #00f2fe;">
+                                <h3>Jump</h3>
+                                <p><span class="key-cap">SPACE</span> / <span class="key-cap">TAP</span></p>
+                            </div>
+                            <div class="panel-card" style="border-bottom-color: #ff007f;">
+                                <h3>Double Leap</h3>
+                                <p>Double <span class="key-cap">SPACE</span></p>
+                            </div>
+                            <div class="panel-card" style="border-bottom-color: #ffff00;">
+                                <h3>Slide</h3>
+                                <p>Hold <span class="key-cap">↓</span> / <span class="key-cap">S</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="info-modal" id="aboutModal" onclick="toggleModal('aboutModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3>Project Codex</h3>
+            <p>Quantum Jump is a performance-optimized web module synthesized entirely with native browser technologies. The engine tracks continuous collision fields dynamically while generating 8-bit retro audio frequencies via hard-coded oscillator matrices.</p>
+            <button class="btn-luxury btn-luxury-primary" style="width:100%; border-radius:12px;" onclick="toggleModal('aboutModal')">Close Codex</button>
+        </div>
+    </div>
+
+    <script>
+        const aura = document.getElementById('mouseAura');
+        const rightTrack = document.getElementById('rightTrack');
+        const container = document.getElementById('consoleContainer');
+
+        // Global High-End Mouse Capture Vector
+        window.addEventListener('mousemove', (e) => {
+            aura.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+
+            // Elegant 3D Glass Parallax Tilt Rotation Effect
+            const rect = rightTrack.getBoundingClientRect();
+            const x = e.clientX - rect.left - (rect.width / 2);
+            const y = e.clientY - rect.top - (rect.height / 2);
+            
+            const rotateX = -(y / (rect.height / 2)) * 6; // Soft restricted degree angle caps
+            const rotateY = (x / (rect.width / 2)) * 6;
+
+            container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.01, 1.01, 1.01)`;
+        });
+
+        // Reset tracking on frame leave to ensure visual equilibrium
+        rightTrack.addEventListener('mouseleave', () => {
+            container.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        });
+
+        function toggleModal(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function focusConsole() {
+            document.getElementById('startBtn').focus();
+            container.style.boxShadow = "0 30px 80px rgba(0, 242, 254, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.1)";
+            setTimeout(() => {
+                container.style.boxShadow = "var(--glass-shadow)";
+            }, 800);
+        }
+    </script>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const highScoreEl = document.getElementById('highScore');
+        const overlay = document.getElementById('gameOverlay');
+        const startBtn = document.getElementById('startBtn');
+        const overlayTitle = document.getElementById('overlay-title');
+        const overlayDesc = document.getElementById('overlay-desc');
+
+        // Game Configuration & State
+        let gameState = 'START';
+        let score = 0;
+        let animationFrameId;
+        let highScore = localStorage.getItem('quantum_highscore') || 0;
+        highScoreEl.textContent = highScore;
+
+        // Visual effects and audio properties
+        let currentBgHue = 240;
+        let shakeDuration = 0;
+        let shakeIntensity = 0;
+        let audioCtx = null;
+
+        // Player config matrix
+        const player = {
+            x: 100,
+            y: 300,
+            radius: 12,
+            gravity: 0.5,            // Lowered from 0.6 for lighter fall weight
+            jumpForce: -10,          // Balanced with lower gravity
+            doubleJumpForce: -8.5,
+            velocity: 0,
+            groundY: 350,
+            isGrounded: false,
+            maxJumps: 2,
+            jumpsLeft: 2,
+            color: '#00f2fe',
+            isDucking: false,
+            duckScaleY: 0.5
+        };
+
+        // Obstacles & systems
+        let obstacles = [];
+        let obstacleTimer = 0;
+        let spawnInterval = 110;     // Increased window space between spawns
+        let gameSpeed = 3.5;         // Lowered starting baseline velocity from 5
+        let particles = [];
+
+        // Parallax Starfield Storage
+        let backStars = [];
+        let foreStars = [];
+        const maxStars = 25;
+
+        const obstaclePatterns = [
+            { type: 'spike', heightVariance: 0 },
+            { type: 'spike', heightVariance: 15 },
+            { type: 'drone', lowFly: true },
+            { type: 'drone', lowFly: false },
+            { type: 'combo_spike_drone' }
+        ];
+
+        // --- Hardware Synthesis Audio Engine ---
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (!audioCtx) return;
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'jump') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(550, now + 0.12);
+                gainNode.gain.setValueAtTime(0.12, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.12);
+                osc.start(now);
+                osc.stop(now + 0.12);
+            } 
+            else if (type === 'doubleJump') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(380, now);
+                osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
+                gainNode.gain.setValueAtTime(0.15, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.08);
+                osc.start(now);
+                osc.stop(now + 0.08);
+            } 
+            else if (type === 'score') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(783.99, now + 0.05); // G5
+                gainNode.gain.setValueAtTime(0.05, now);
+                gainNode.gain.linearRampToValueAtTime(0.01, now + 0.15);
+                osc.start(now);
+                osc.stop(now + 0.15);
+            } 
+            else if (type === 'crash') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.linearRampToValueAtTime(30, now + 0.4);
+                gainNode.gain.setValueAtTime(0.25, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            }
+        }
+
+        // --- Controls Mapping ---
+        function triggerJump() {
+            initAudio();
+            if (gameState === 'PLAYING') {
+                if (player.isDucking) return;
+                if (player.jumpsLeft > 0) {
+                    if (player.isGrounded) {
+                        player.velocity = player.jumpForce;
+                        player.isGrounded = false;
+                        createParticles(player.x, player.y, `hsl(${playerColorHue}, 100%, 65%)`, 12);
+                        playSound('jump');
+                    } else {
+                        player.velocity = player.doubleJumpForce;
+                        createParticles(player.x, player.y, `hsl(${(playerColorHue + 120) % 360}, 100%, 60%)`, 15); 
+                        playSound('doubleJump');
+                    }
+                    player.jumpsLeft--;
+                }
+            } else if (gameState === 'START' || gameState === 'GAMEOVER') {
+                startGame();
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                triggerJump();
+            }
+            if ((e.code === 'ArrowDown' || e.code === 'KeyS') && gameState === 'PLAYING') {
+                e.preventDefault();
+                if (player.isGrounded) player.isDucking = true;
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'ArrowDown' || e.code === 'KeyS') {
+                player.isDucking = false;
+            }
+        });
+
+        // Touch/Mouse click handler inside canvas boundaries
+        canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            triggerJump();
+        });
+        canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            triggerJump();
+        });
+
+        startBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            startGame();
+        });
+
+        // --- Environment Engine Helpers ---
+        function initStars() {
+            backStars = []; foreStars = [];
+            for (let i = 0; i < maxStars; i++) {
+                backStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (player.groundY - 40),
+                    speed: 0.5, size: Math.random() * 1 + 0.5
+                });
+                foreStars.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * (player.groundY - 40),
+                    speed: 1.2, size: Math.random() * 1.5 + 1
+                });
+            }
+        }
+
+        function createParticles(x, y, color, count) {
+            for (let i = 0; i < count; i++) {
+                particles.push({
+                    x: x, y: y,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6,
+                    radius: Math.random() * 3 + 1,
+                    alpha: 1, color: color
+                });
+            }
+        }
+
+        function triggerScreenShake(duration, intensity) {
+            shakeDuration = duration;
+            shakeIntensity = intensity;
+        }
+
+        // --- Cycles & Generators ---
+        function startGame() {
+            gameState = 'PLAYING';
+            score = 0; gameSpeed = 3.5;
+            obstacles = []; particles = [];
+            player.y = 300; player.velocity = 0;
+            player.isDucking = false;
+            player.jumpsLeft = player.maxJumps;
+            obstacleTimer = 0; currentBgHue = 240;
+            scoreEl.textContent = score;
+            overlay.classList.add('hidden');
+            initStars();
+            
+            cancelAnimationFrame(animationFrameId);
+            gameLoop();
+        }
+
+        function gameOver() {
+            gameState = 'GAMEOVER';
+            triggerScreenShake(20, 12);
+            createParticles(player.x, player.y, '#ff416c', 40);
+            playSound('crash');
+
+            if (score > highScore) {
+                highScore = score;
+                localStorage.setItem('quantum_highscore', highScore);
+                highScoreEl.textContent = highScore;
+                overlayTitle.textContent = "NEW HIGH SCORE!";
+            } else {
+                overlayTitle.textContent = "GAME OVER";
+            }
+            
+            overlayDesc.textContent = `You cleared ${score} dimensional gaps!`;
+            startBtn.textContent = "TRY AGAIN";
+            setTimeout(() => overlay.classList.remove('hidden'), 300);
+        }
+
+        function spawnObstacle() {
+            const pattern = obstaclePatterns[Math.floor(Math.random() * obstaclePatterns.length)];
+
+            if (pattern.type === 'spike') {
+                const height = 25 + pattern.heightVariance + (Math.random() * 8);
+                obstacles.push({
+                    type: 'spike', x: canvas.width, y: player.groundY - height,
+                    width: 22, height: height, passed: false
+                });
+            } 
+            else if (pattern.type === 'drone') {
+                const targetY = pattern.lowFly ? (player.groundY - 50) : (player.groundY - 95);
+                obstacles.push({
+                    type: 'drone', x: canvas.width, y: targetY,
+                    width: 24, height: 16, passed: false, pulseTimer: 0
+                });
+            } 
+            else if (pattern.type === 'combo_spike_drone') {
+                obstacles.push({
+                    type: 'spike', x: canvas.width, y: player.groundY - 35,
+                    width: 22, height: 35, passed: false
+                });
+                obstacles.push({
+                    type: 'drone', x: canvas.width + 190, y: player.groundY - 95, // Increased padding distance for lower speed tracking
+                    width: 24, height: 16, passed: false, pulseTimer: 4
+                });
+            }
+        }
+
+        let playerColorHue = 180;
+
+        // --- Core Run Loop ---
+        function gameLoop() {
+            if (gameState !== 'PLAYING') {
+                if (shakeDuration > 0) {
+                    ctx.save();
+                    let dx = (Math.random() - 0.5) * shakeIntensity;
+                    let dy = (Math.random() - 0.5) * shakeIntensity;
+                    ctx.translate(dx, dy);
+                    ctx.clearRect(-50, -50, canvas.width + 100, canvas.height + 100);
+                    ctx.restore();
+                    shakeDuration--;
+                }
+                return;
+            }
+
+            ctx.save();
+
+            if (shakeDuration > 0) {
+                let dx = (Math.random() - 0.5) * shakeIntensity;
+                let dy = (Math.random() - 0.5) * shakeIntensity;
+                ctx.translate(dx, dy);
+                shakeDuration--;
+            }
+
+            // 1. Dynamic Chromatic Gradient Transition Setup
+            let targetedHue = 240 + (score * 15); 
+            currentBgHue += (targetedHue - currentBgHue) * 0.04; 
+            playerColorHue = (currentBgHue + 120) % 360; // Sync player color to complementary shifting background hue
+
+            let bgGradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            bgGradient.addColorStop(0, `hsla(${currentBgHue}, 45%, 6%, 1)`);
+            bgGradient.addColorStop(1, `hsla(${currentBgHue + 60}, 55%, 3%, 1)`);
+            ctx.fillStyle = bgGradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 2. Parallax Starfield Layers
+            ctx.fillStyle = `hsla(${playerColorHue}, 40%, 80%, 0.3)`;
+            for (let star of backStars) {
+                star.x -= star.speed * (gameSpeed * 0.2);
+                if (star.x < 0) star.x = canvas.width;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            }
+            ctx.fillStyle = `hsla(${playerColorHue}, 100%, 65%, 0.5)`;
+            for (let star of foreStars) {
+                star.x -= star.speed * (gameSpeed * 0.2);
+                if (star.x < 0) star.x = canvas.width;
+                ctx.fillRect(star.x, star.y, star.size, star.size);
+            }
+
+            // 3. Floor Vector Boundary
+            ctx.strokeStyle = `hsla(${currentBgHue}, 100%, 50%, 0.4)`;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(0, player.groundY);
+            ctx.lineTo(canvas.width, player.groundY);
+            ctx.stroke();
+
+            // 4. Update & Draw Player Hitbox Transformations
+            player.velocity += player.gravity;
+            player.y += player.velocity;
+
+            if (player.y >= player.groundY - player.radius) {
+                player.y = player.groundY - player.radius;
+                player.velocity = 0;
+                player.isGrounded = true;
+                player.jumpsLeft = player.maxJumps;
+            }
+
+            // Set dynamic core player glow profile
+            player.color = `hsl(${playerColorHue}, 100%, 60%)`;
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = player.color;
+            ctx.fillStyle = player.color;
+            ctx.beginPath();
+
+            let pRadiusX = player.radius;
+            let pRadiusY = player.radius;
+            let checkPlayerY = player.y;
+
+            if (player.isDucking && player.isGrounded) {
+                pRadiusX = player.radius * 1.4;
+                pRadiusY = player.radius * player.duckScaleY;
+                checkPlayerY = player.groundY - pRadiusY;
+                ctx.ellipse(player.x, checkPlayerY, pRadiusX, pRadiusY, 0, 0, Math.PI * 2);
+            } else {
+                ctx.arc(player.x, player.y, player.radius, 0, Math.PI * 2);
+            }
+            ctx.fill();
+            ctx.shadowBlur = 0; 
+
+            // 5. Update & Render Obstacle Generator Array
+            obstacleTimer++;
+            if (obstacleTimer >= spawnInterval) {
+                spawnObstacle();
+                obstacleTimer = 0;
+                // Gradual acceleration configuration (capped to lower limit)
+                if (gameSpeed < 8.5) {
+                    gameSpeed += 0.15;
+                    spawnInterval = Math.max(60, 110 - Math.floor(gameSpeed * 4));
+                }
+            }
+
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i];
+                obs.x -= gameSpeed;
+
+                if (obs.type === 'spike') {
+                    ctx.fillStyle = `hsl(${(currentBgHue + 320) % 360}, 100%, 55%)`;
+                    ctx.beginPath();
+                    ctx.moveTo(obs.x, player.groundY);
+                    ctx.lineTo(obs.x + obs.width / 2, obs.y);
+                    ctx.lineTo(obs.x + obs.width, player.groundY);
+                    ctx.fill();
+                } else if (obs.type === 'drone') {
+                    obs.pulseTimer += 0.15;
+                    let pulseOffsetY = Math.sin(obs.pulseTimer) * 4;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#ffff00';
+                    ctx.fillStyle = '#ffff00';
+                    ctx.fillRect(obs.x, obs.y + pulseOffsetY, obs.width, obs.height);
+                    ctx.fillStyle = '#ffaa00';
+                    ctx.fillRect(obs.x - 4, obs.y + pulseOffsetY + 4, 4, 8);
+                    ctx.fillRect(obs.x + obs.width, obs.y + pulseOffsetY + 4, 4, 8);
+                    ctx.shadowBlur = 0;
+                }
+
+                if (!obs.passed && obs.x + obs.width < player.x) {
+                    score++;
+                    obs.passed = true;
+                    scoreEl.textContent = score;
+                    triggerScreenShake(5, 2);
+                    playSound('score');
+                }
+
+                // Capsule Shape Collision Math Mechanics
+                let closestX = Math.max(obs.x, Math.min(player.x, obs.x + obs.width));
+                let closestY = obs.type === 'drone' 
+                    ? Math.max(obs.y + (Math.sin(obs.pulseTimer) * 4), Math.min(checkPlayerY, obs.y + obs.height + (Math.sin(obs.pulseTimer) * 4)))
+                    : Math.max(obs.y, Math.min(checkPlayerY, player.groundY));
+
+                let distanceX = player.x - closestX;
+                let distanceY = checkPlayerY - closestY;
+
+                if ((distanceX * distanceX) / (pRadiusX * pRadiusX) + (distanceY * distanceY) / (pRadiusY * pRadiusY) < 1) {
+                    ctx.restore();
+                    gameOver();
+                    return;
+                }
+
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                }
+            }
+
+            // 6. Juice System FX Engine
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let p = particles[i];
+                p.x += p.vx; p.y += p.vy; p.alpha -= 0.03;
+
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    continue;
+                }
+
+                ctx.save();
+                ctx.globalAlpha = p.alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            ctx.restore();
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+    </script>
+</body>
+</html>
