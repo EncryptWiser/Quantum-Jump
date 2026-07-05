@@ -7,7 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    
+
+    <!-- Firebase (used only for the global leaderboard) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
     <style>
         /* --- DESIGN SYSTEM & CSS VARIABLES --- */
         :root {
@@ -148,6 +152,7 @@
         .nav-actions {
             display: flex;
             gap: 40px;
+            align-items: center;
         }
 
         .nav-link {
@@ -178,6 +183,31 @@
         .nav-link:hover::after {
             transform: scaleX(1);
             transform-origin: left;
+        }
+
+        .visitor-badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-dim);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        .visitor-badge .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #00ff88;
+            box-shadow: 0 0 8px #00ff88;
+        }
+        .visitor-badge span#visitorCount {
+            color: var(--neon-cyan);
+            font-weight: 600;
         }
 
         /* --- CENTER SCREEN SPLIT CONTENT SECTION --- */
@@ -368,6 +398,55 @@
             margin-bottom: 25px;
         }
 
+        /* Leaderboard modal specifics */
+        #leaderboardModal .modal-card {
+            max-width: 420px;
+        }
+        .leaderboard-list {
+            list-style: none;
+            margin-bottom: 20px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .leaderboard-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 8px;
+            font-size: 0.85rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .leaderboard-list li:last-child {
+            border-bottom: none;
+        }
+        .leaderboard-rank {
+            font-family: var(--font-display);
+            font-weight: 700;
+            width: 24px;
+            color: var(--text-dim);
+        }
+        .leaderboard-list li:nth-child(1) .leaderboard-rank { color: #ffd700; }
+        .leaderboard-list li:nth-child(2) .leaderboard-rank { color: #c0c0c0; }
+        .leaderboard-list li:nth-child(3) .leaderboard-rank { color: #cd7f32; }
+        .leaderboard-name {
+            flex: 1;
+            color: var(--text-pure);
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .leaderboard-score {
+            color: var(--neon-cyan);
+            font-weight: 700;
+        }
+        .leaderboard-empty {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            padding: 20px 0;
+            text-align: center;
+        }
+
         /* --- TRIPLE CHECK LOCK: IMMUTABLE GAME CSS SCHEMATICS --- */
         .game-container {
             position: relative;
@@ -482,6 +561,53 @@
             font-size: clamp(0.65rem, 2vw, 0.8rem);
             color: #00f2fe;
         }
+
+        /* Score submission row shown on game over */
+        .score-submit-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            width: 100%;
+            max-width: 280px;
+        }
+        #playerNameInput {
+            flex: 1;
+            min-width: 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 8px 14px;
+            color: var(--text-pure);
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            outline: none;
+        }
+        #playerNameInput:focus {
+            border-color: var(--neon-cyan);
+        }
+        #submitScoreBtn {
+            background: var(--neon-cyan);
+            color: #04121a;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        #submitScoreBtn:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        #scoreSubmitStatus {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            min-height: 14px;
+        }
     </style>
 </head>
 <body>
@@ -497,6 +623,8 @@
         <header>
             <div class="brand-logo">Quantum Jump</div>
             <nav class="nav-actions">
+                <div class="visitor-badge"><span class="dot"></span>VISITS: <span id="visitorCount">—</span></div>
+                <button class="nav-link" onclick="openLeaderboard()">Leaderboard</button>
                 <button class="nav-link" onclick="toggleModal('aboutModal')">About</button>
                 <a href="https://github.com/EncryptWiser" target="_blank" class="nav-link">GitHub</a>
                 <button class="nav-link" style="color: var(--neon-cyan)" onclick="focusConsole()">Play Now</button>
@@ -543,6 +671,12 @@
                                 <h2 id="overlay-title">QUANTUM JUMP</h2>
                                 <p id="overlay-desc">Use Jump, Double Jump, and Slides to dodge security vectors!</p>
                                 <button class="btn" id="startBtn">START GAME</button>
+
+                                <div class="score-submit-row" id="scoreSubmitRow" style="display:none;">
+                                    <input type="text" id="playerNameInput" placeholder="Your name" maxlength="15">
+                                    <button id="submitScoreBtn">Submit</button>
+                                </div>
+                                <div id="scoreSubmitStatus"></div>
                             </div>
                         </div>
 
@@ -571,6 +705,16 @@
             <h3>Project Codex</h3>
             <p>Quantum Jump is a performance-optimized web module synthesized entirely with native browser technologies. The engine tracks continuous collision fields dynamically while generating 8-bit retro audio frequencies via hard-coded oscillator matrices.</p>
             <button class="btn-luxury btn-luxury-primary" style="width:100%; border-radius:12px;" onclick="toggleModal('aboutModal')">Close Codex</button>
+        </div>
+    </div>
+
+    <div class="info-modal" id="leaderboardModal" onclick="toggleModal('leaderboardModal')">
+        <div class="modal-card" onclick="event.stopPropagation()">
+            <h3>Global Leaderboard</h3>
+            <ul class="leaderboard-list" id="leaderboardList">
+                <li class="leaderboard-empty">Loading scores…</li>
+            </ul>
+            <button class="btn-luxury btn-luxury-primary" style="width:100%; border-radius:12px;" onclick="toggleModal('leaderboardModal')">Close</button>
         </div>
     </div>
 
@@ -610,6 +754,150 @@
                 container.style.boxShadow = "var(--glass-shadow)";
             }, 800);
         }
+
+        // --- Site Visitor Counter (GitHub Pages friendly, no backend needed) ---
+        // Uses the free CountAPI service to persist a real visit count across all visitors.
+        // IMPORTANT: change NAMESPACE to something unique to your repo before publishing,
+        // otherwise you may share a counter with someone else's project of the same name.
+        (function initVisitorCounter() {
+            const visitorEl = document.getElementById('visitorCount');
+            const NAMESPACE = 'quantum-jump-encryptwiser'; // <-- make this unique, e.g. your github username + repo
+            const KEY = 'site-visits';
+
+            fetch(`https://api.countapi.xyz/hit/${NAMESPACE}/${KEY}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && typeof data.value !== 'undefined') {
+                        visitorEl.textContent = data.value.toLocaleString();
+                    } else {
+                        visitorEl.textContent = '—';
+                    }
+                })
+                .catch(() => {
+                    visitorEl.textContent = '—';
+                });
+        })();
+
+        // ==========================================================================
+        // GLOBAL LEADERBOARD (Firebase Realtime Database)
+        // ==========================================================================
+        // SETUP REQUIRED before this works:
+        // 1. Go to https://console.firebase.google.com and create a free project.
+        // 2. In the project, open "Build > Realtime Database" and click "Create Database"
+        //    (choose any region, start in "test mode" for a quick start).
+        // 3. Go to Project Settings (gear icon) > General > "Your apps" > Web app (</>) and
+        //    register an app. Firebase will give you a config object — paste its values below.
+        // 4. In the Realtime Database "Rules" tab, use something like this so anyone can
+        //    read scores but writes are limited to sane values (adjust to taste):
+        //
+        //    {
+        //      "rules": {
+        //        "leaderboard": {
+        //          ".read": true,
+        //          ".write": true,
+        //          "$entry": {
+        //            ".validate": "newData.hasChildren(['name','score','timestamp'])"
+        //          }
+        //        }
+        //      }
+        //    }
+        //
+        // Until you fill in a real config, the leaderboard UI will show a friendly
+        // "not configured yet" message instead of breaking the page.
+        // --------------------------------------------------------------------------
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+            projectId: "YOUR_PROJECT",
+        };
+
+        let leaderboardReady = false;
+        let db = null;
+
+        try {
+            if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_API_KEY") {
+                firebase.initializeApp(firebaseConfig);
+                db = firebase.database();
+                leaderboardReady = true;
+            }
+        } catch (err) {
+            console.warn('Firebase not configured yet:', err);
+            leaderboardReady = false;
+        }
+
+        function submitScoreToLeaderboard(name, score) {
+            const statusEl = document.getElementById('scoreSubmitStatus');
+            if (!leaderboardReady) {
+                statusEl.textContent = 'Leaderboard not configured yet.';
+                return;
+            }
+            const cleanName = (name || 'Anonymous').trim().substring(0, 15) || 'Anonymous';
+            statusEl.textContent = 'Submitting…';
+
+            db.ref('leaderboard').push({
+                name: cleanName,
+                score: score,
+                timestamp: Date.now()
+            }).then(() => {
+                statusEl.textContent = 'Score submitted!';
+                document.getElementById('submitScoreBtn').disabled = true;
+                loadLeaderboard();
+            }).catch((err) => {
+                console.error(err);
+                statusEl.textContent = 'Could not submit score.';
+            });
+        }
+
+        function loadLeaderboard() {
+            const listEl = document.getElementById('leaderboardList');
+            if (!leaderboardReady) {
+                listEl.innerHTML = '<li class="leaderboard-empty">Leaderboard not configured yet. Add your Firebase config in the source to enable it.</li>';
+                return;
+            }
+
+            listEl.innerHTML = '<li class="leaderboard-empty">Loading scores…</li>';
+
+            db.ref('leaderboard').orderByChild('score').limitToLast(10).once('value')
+                .then((snapshot) => {
+                    const entries = [];
+                    snapshot.forEach((child) => entries.push(child.val()));
+                    entries.sort((a, b) => b.score - a.score);
+
+                    if (entries.length === 0) {
+                        listEl.innerHTML = '<li class="leaderboard-empty">No scores yet. Be the first!</li>';
+                        return;
+                    }
+
+                    listEl.innerHTML = entries.map((entry, i) => `
+                        <li>
+                            <span class="leaderboard-rank">#${i + 1}</span>
+                            <span class="leaderboard-name">${escapeHtml(entry.name || 'Anonymous')}</span>
+                            <span class="leaderboard-score">${entry.score}</span>
+                        </li>
+                    `).join('');
+                })
+                .catch((err) => {
+                    console.error(err);
+                    listEl.innerHTML = '<li class="leaderboard-empty">Could not load scores.</li>';
+                });
+        }
+
+        function escapeHtml(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function openLeaderboard() {
+            loadLeaderboard();
+            toggleModal('leaderboardModal');
+        }
+
+        document.getElementById('submitScoreBtn').addEventListener('click', () => {
+            const name = document.getElementById('playerNameInput').value;
+            submitScoreToLeaderboard(name, window.__lastScore || 0);
+        });
     </script>
 
     <script>
@@ -829,7 +1117,13 @@
             scoreEl.textContent = score;
             overlay.classList.add('hidden');
             initStars();
-            
+
+            // Reset the score-submission UI for a fresh run
+            document.getElementById('scoreSubmitRow').style.display = 'none';
+            document.getElementById('scoreSubmitStatus').textContent = '';
+            document.getElementById('submitScoreBtn').disabled = false;
+            document.getElementById('playerNameInput').value = '';
+
             cancelAnimationFrame(animationFrameId);
             gameLoop();
         }
@@ -851,6 +1145,11 @@
             
             overlayDesc.textContent = `You cleared ${score} dimensional gaps!`;
             startBtn.textContent = "TRY AGAIN";
+
+            // Offer to submit this run's score to the global leaderboard
+            window.__lastScore = score;
+            document.getElementById('scoreSubmitRow').style.display = 'flex';
+
             setTimeout(() => overlay.classList.remove('hidden'), 300);
         }
 
